@@ -1,0 +1,9 @@
+{
+    "dc": null,
+    "silence": true,
+    "gauss_cutoff": true,
+    "threshold_metric": "kneepoint",
+    "density_threshold": null,
+    "distance_threshold": null,
+    "anormal": true
+}

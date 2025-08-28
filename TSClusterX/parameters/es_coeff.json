@@ -1,0 +1,7 @@
+{
+    "seasonal_periods": 4,
+    "trend": "add",
+    "seasonal": "add",
+    "use_boxcox": false,
+    "initialization_method": "heuristic"
+}

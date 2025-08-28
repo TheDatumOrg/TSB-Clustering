@@ -1,0 +1,12 @@
+{
+    "n_filters": 50,
+    "kernel_size": 10,
+    "strides": 1,
+    "pool_size": 10,
+    "n_units": [50, 1],
+    "alpha": 1.0,
+    "dist_metric": "eucl",
+    "cluster_init": "kmeans",
+    "epochs": 200,
+    "batch_size": 32
+}

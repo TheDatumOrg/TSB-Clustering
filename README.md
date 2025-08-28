@@ -19,29 +19,265 @@ To ease reproducibility, we share our results over an established benchmarks:
 For the preprocessing steps check [here](https://github.com/thedatumorg/UCRArchiveFixes).
 
 
-## Usage
+## Overview
 
-```
-$ python main.py --dataset ucr_uea --data_path ./data/UCR2018/ --results_path ./experiment.json --model k_shape --start 1 --end 1
-```
-```
-'rand_score': 0.6553072625698324
-'adjusted_rand_score': 0.28193671569162176
-'normalized_mutual_information': 0.4241221530777422
-'sub_dataset_name': 'BME'
-'distance_timing': None
-'cluster_timing': 8.67257952690124
+TSClusterX is designed to provide a unified platform for evaluating time series clustering algorithms with support for various distance measures, clustering models, and evaluation metrics. The framework follows a factory design pattern that makes it easy to extend with new components.
+
+## Features
+
+- **Multiple Clustering Models**: Support for traditional clustering algorithms (K-means, Agglomerative, DBSCAN) and specialized time series clustering methods
+- **Diverse Distance Measures**: Implementation of various time series distance measures including DTW, GAK, SBD, MSM, TWED, and more
+- **Extensible Architecture**: Factory design pattern allows easy addition of new models, distances, dataloaders, and metrics
+- **Standard Datasets**: Built-in support for UCR/UEA time series archive
+- **Evaluation Metrics**: Comprehensive evaluation with Rand Index, Adjusted Rand Index, and Normalized Mutual Information
+
+## Installation
+
+### Requirements
+
+Python 3.7+ is required. Install the dependencies:
+
+```bash
+pip install -r requirements.txt
 ```
 
+### Dependencies
+
+The main dependencies include:
+- `numpy` - Numerical computing
+- `scipy` - Scientific computing 
+- `scikit-learn` - Machine learning algorithms
+- `pandas` - Data manipulation
+- `matplotlib` - Plotting and visualization
+- `torch` - Deep learning framework (for neural clustering models)
+- `tslearn` - Time series machine learning
+
+## Quick Start
+
+### Basic Usage
+
+```bash
+# Run clustering on UCR datasets with K-means and Euclidean distance
+python TSClusterX/main.py --dataset ucr_uea --start 1 --end 10 \
+    --dataset_path data/UCR2018/ --model kmeans --distance euclidean
+
+# Run with DTW distance and agglomerative clustering
+python TSClusterX/main.py --dataset ucr_uea --start 1 --end 10 \
+    --dataset_path data/UCR2018/ --model agglomerative --distance dtw
+
+# Use parameter configuration files
+python TSClusterX/main.py --dataset ucr_uea --start 1 --end 10 \
+    --dataset_path data/UCR2018/ --model dbscan --distance euclidean \
+    --parameter_settings parameters/dbscan.json --metrics RI ARI NMI
+```
+
+### Command Line Arguments
+
+- `--dataset`: Dataset type (default: 'ucr_uea')
+- `--start`: Start index for UCR datasets (default: 1)
+- `--end`: End index for UCR datasets (default: 128)
+- `--dataset_path`: Path to dataset directory
+- `--model`: Clustering model name
+- `--distance`: Distance measure name
+- `--parameter_settings`: JSON file with model parameters
+- `--metrics`: List of evaluation metrics to compute
+
+## Architecture
+
+TSClusterX uses a factory design pattern for extensibility:
+
+### Models Factory
+
+```python
+from models.model import ModelFactory
+
+# Get a clustering model
+model = ModelFactory.get_model('kmeans', n_clusters=3, params={'init': 'k-means++'})
+```
+
+Supported models include:
+- `kmeans` - K-means clustering
+- `agglomerative` - Agglomerative hierarchical clustering
+- `dbscan` - Density-based clustering
+- `pam` - Partitioning Around Medoids
+- `spectralclustering` - Spectral clustering
+- `densitypeaks` - Density peaks clustering
+- And many more specialized time series clustering methods
+
+### Distance Factory
+
+```python
+from distances.distance import DistanceFactory
+
+# Get a distance measure
+distance = DistanceFactory.get_distance('dtw')
+distance_matrix = distance.compute(time_series_data)
+```
+
+Supported distances include:
+- `euclidean` - Euclidean distance
+- `dtw` - Dynamic Time Warping
+- `gak` - Global Alignment Kernel
+- `sbd` - Shape-Based Distance
+- `msm` - Move-Split-Merge
+- `twed` - Time Warp Edit Distance
+- `erp` - Edit Distance with Real Penalty
+- And more
+
+### DataLoader Factory
+
+```python
+from dataloaders.dataloader import DataLoaderFactory
+
+# Get a data loader
+dataloader = DataLoaderFactory.get_dataloader('ucr_uea', 'data/UCR2018/')
+ts, labels, n_clusters = dataloader.load('Chinatown')
+```
+
+### Metrics
+
+```python
+from metrics.metric import ClusterMetrics
+
+# Evaluate clustering results
+metrics = ClusterMetrics(true_labels, predicted_labels)
+ri = metrics.rand_score()
+ari = metrics.adjusted_rand_score()
+nmi = metrics.normalized_mutual_information()
+```
+
+## Extending TSClusterX
+
+The factory design pattern makes TSClusterX highly extensible. Here's how to add new components:
+
+### Adding a New Clustering Model
+
+1. Create a new model file in `TSClusterX/models/`:
+
+```python
+# mymodel.py
+from models.model import BaseClusterModel
+
+class MyClusterModel(BaseClusterModel):
+    def fit_predict(self, X):
+        # Implement your clustering algorithm
+        # Return labels and elapsed time
+        return labels, elapsed_time
+```
+
+2. Register it in `models/model.py` ModelFactory:
+
+```python
+elif model_name == 'mymodel':
+    from models import mymodel
+    return mymodel.MyClusterModel(n_clusters, params, distance_name, distance_matrix)
+```
+
+### Adding a New Distance Measure
+
+1. Create a new distance file in `TSClusterX/distances/`:
+
+```python
+# mydistance.py
+from distances.distance import DistanceMeasure
+
+class MyDistance(DistanceMeasure):
+    def compute(self, series_set):
+        # Implement distance computation
+        # Return distance matrix
+        return distance_matrix
+```
+
+2. Register it in `distances/distance.py` DistanceFactory:
+
+```python
+elif name == "mydistance":
+    from distances.mydistance import MyDistance
+    return MyDistance()
+```
+
+### Adding a New DataLoader
+
+1. Create a new dataloader file in `TSClusterX/dataloaders/`:
+
+```python
+# mydataloader.py
+class MyDataLoader:
+    def __init__(self, dataset_name, dataset_path):
+        self.name = dataset_name
+        self.path = dataset_path
+    
+    def load(self, dataset_name):
+        # Load your dataset
+        # Return time_series, labels, n_clusters
+        return ts, labels, n_clusters
+```
+
+2. Register it in `dataloaders/dataloader.py`:
+
+```python
+elif dataset_name == 'mydataset':
+    from .mydataloader import MyDataLoader
+    return MyDataLoader(dataset_name, dataset_path)
+```
+
+### Adding New Metrics
+
+Extend the `ClusterMetrics` class in `metrics/metric.py`:
+
+```python
+def my_custom_metric(self):
+    # Implement your metric
+    return metric_value
+```
+
+## Parameter Configuration
+
+Model parameters can be specified using JSON configuration files:
+
+```json
+{
+    "eps": 0.5,
+    "min_samples": 5,
+    "metric": "euclidean"
+}
+```
+
+Place configuration files in the `parameters/` directory and reference them with `--parameter_settings`.
+
+## Examples
+
+### Example 1: Compare Multiple Distance Measures
+
+```bash
+# Test different distances with K-means
+for distance in euclidean dtw gak sbd; do
+    python TSClusterX/main.py --dataset ucr_uea --start 1 --end 5 \
+        --dataset_path data/UCR2018/ --model kmeans --distance $distance
+done
+```
+
+### Example 2: Density-based Clustering with Custom Parameters
+
+```bash
+python TSClusterX/main.py --dataset ucr_uea --start 1 --end 10 \
+    --dataset_path data/UCR2018/ --model dbscan --distance dtw \
+    --parameter_settings parameters/dbscan.json --metrics RI ARI NMI
+```
 
 ## Results
 
-Server Specifications: 4  Dual Intel(R) Xeon(R) Silver 4116 (12-core with 2-way SMT), 2.10 GHz, 196GB RAM; Ubuntu Linux 18.04.3 LTS
+Results are automatically saved in the `results/` directory, organized by model type. Each run generates evaluation metrics and timing information.
 
-GPU Specifications: NVIDIA GeForce RTX 2080 GPU, 32GB memory.
+## Contributing
 
+Contributions are welcome! The factory design pattern makes it easy to add new:
+- Clustering algorithms
+- Distance measures  
+- Dataset loaders
+- Evaluation metrics
 
-
+Please follow the existing patterns when adding new components.
 
 ## Methods
 
@@ -222,3 +458,14 @@ lists the methods considered:
 <br>
 [39] Holder, Christopher, and Anthony Bagnall. "Rock the KASBA: Blazingly Fast and Accurate Time Series Clustering." arXiv preprint arXiv:2411.17838 (2024).
 <br>
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Citation
+
+If you use TSClusterX in your research, please cite:
+
+```bibtex
+```

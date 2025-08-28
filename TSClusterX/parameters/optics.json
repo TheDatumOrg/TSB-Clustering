@@ -1,0 +1,16 @@
+{
+    "min_samples": 5,
+    "max_eps": null,
+    "metric": "euclidean",
+    "p": 2,
+    "metric_params": null,
+    "cluster_method": "xi",
+    "eps": null,
+    "xi": 0.05,
+    "predecessor_correction": true,
+    "min_cluster_size": null,
+    "algorithm": "auto",
+    "leaf_size": 30,
+    "memory": null,
+    "n_jobs": null
+}

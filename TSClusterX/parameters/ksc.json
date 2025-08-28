@@ -1,0 +1,5 @@
+{
+    "max_iter": 100,
+    "n_runs": 1,
+    "random_state": 42
+}

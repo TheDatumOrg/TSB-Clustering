@@ -1,0 +1,14 @@
+{
+    "eigen_solver": null,
+    "n_components": null,
+    "degree": 3,
+    "coef0": 1,
+    "kernel_params": null,
+    "gamma": 1.0,
+    "affinity": "rbf",
+    "n_init": 1,
+    "eigen_tol": 0.0,
+    "assign_labels": "kmeans",
+    "verbose": false,
+    "n_jobs": null
+}

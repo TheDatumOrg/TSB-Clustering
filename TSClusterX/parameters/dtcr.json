@@ -1,0 +1,7 @@
+{
+    "encoder_hidden_units": [100, 50, 50, 30],
+    "lambda": 0.0001,
+    "dilations": [1, 2, 4, 8],
+    "epochs": 100,
+    "training_samples_num": 100
+}

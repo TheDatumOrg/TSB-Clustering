@@ -1,0 +1,7 @@
+{
+    "init": "random",
+    "n_init": 1,
+    "max_iter": 100,
+    "tol": 0.0001,
+    "verbose": 0
+}

@@ -1,0 +1,6 @@
+{
+    "threshold": 0.5,
+    "branching_factor": 50,
+    "compute_labels": true,
+    "copy": true
+}

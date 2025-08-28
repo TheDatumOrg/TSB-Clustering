@@ -1,0 +1,9 @@
+{
+    "linkage": "complete",
+    "metric": "euclidean",
+    "memory": null,
+    "connectivity": null,
+    "compute_full_tree": "auto",
+    "distance_threshold": null,
+    "compute_distances": false
+}

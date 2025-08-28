@@ -1,0 +1,6 @@
+{
+    "gamma": 0.01,
+    "max_iter": 100,
+    "tol": 1e-3,
+    "random_state": 42
+}

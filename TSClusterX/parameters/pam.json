@@ -1,0 +1,4 @@
+{
+    "max_iter": 100,
+    "random_state": 42
+}

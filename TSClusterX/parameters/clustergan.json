@@ -1,0 +1,7 @@
+{
+    "latent_dim": 100,
+    "learning_rate": 0.0002,
+    "epochs": 100,
+    "batch_size": 32,
+    "device": "cpu"
+}

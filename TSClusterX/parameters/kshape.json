@@ -1,0 +1,4 @@
+{
+    "centroid_init": "random",
+    "max_iter": 100
+}

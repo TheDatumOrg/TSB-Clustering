@@ -1,0 +1,11 @@
+{
+    "latent_dim": 64,
+    "som_dim": [10, 10],
+    "learning_rate": 0.001,
+    "epochs": 100,
+    "batch_size": 32,
+    "device": "cpu",
+    "alpha": 1.0,
+    "beta": 1.0,
+    "gamma": 1.0
+}

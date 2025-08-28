@@ -1,0 +1,10 @@
+{
+    "damping": 0.5,
+    "max_iter": 100,
+    "convergence_iter": 15,
+    "copy": true,
+    "preference": null,
+    "affinity": "euclidean",
+    "verbose": false,
+    "random_state": null
+}

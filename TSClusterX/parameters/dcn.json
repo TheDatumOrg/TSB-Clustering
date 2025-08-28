@@ -1,0 +1,11 @@
+{
+    "dims": [784, 500, 500, 2000, 10],
+    "init": "glorot_uniform",
+    "act": "relu",
+    "lr": 0.001,
+    "epochs": 300,
+    "batch_size": 256,
+    "tol": 0.001,
+    "update_interval": 140,
+    "save_dir": "./results/temp"
+}
