@@ -308,9 +308,6 @@ Please follow the existing patterns when adding new components.
 
 ## Methods
 
-We have implemented 80 methods from 9 classes of time-series clustering methods proposed for univariate time series. The following table 
-lists the methods considered:
-
 ### <span style='color:Tomato'>Partitional Clustering</span>
 | <span style="background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold"> Clustering Method </span>  | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Distance Measure / Feature Vector </span> | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Reference  </span> |
 |:------------------|:----------------------------------|:------------------------------------|
@@ -371,11 +368,6 @@ lists the methods considered:
 | UShapelet              | -                                 |       [15]                  |
 | LDPS              | -                                 |              [16]           |
 | USLM             | -                                 |           [17]               |
-### <span style='color:Tomato'>Semi-Supervised Clustering</span> 
-| <span style="background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold"> Clustering Method </span>  | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Distance Measure / Feature Vector </span> | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Reference  </span> |
-|:------------------|:----------------------------------|:-------------------|
-| FeatTS              | -                                 |        [18]             |
-| SS-DTW             | -                                 |         [19]             |
 ### <span style='color:Tomato'>Model and Feature based Clustering</span> 
 | <span style="background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold"> Clustering Method </span>  | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Distance Measure / Feature Vector </span> | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Reference  </span> |
 |:------------------|:----------------------------------|:----------------------------|
@@ -394,7 +386,6 @@ lists the methods considered:
 | SOM-VAE            | -                                 |               [30]                |
 | DEPICT           | -                                 |             [31]                   |
 | SDCN            | -                                 |                 [32]              |
-| ClusterGAN            | -                                 |           [34]                    |
 | VADE            | -                                 |              [33]                 |
 | DCN            | -                                 |              [25]                 |
 ### <span style='color:Tomato'>Foundation Model based Clustering</span> 
