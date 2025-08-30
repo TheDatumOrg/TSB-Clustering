@@ -162,7 +162,6 @@ class OFAClusterModel(BaseClusterModel):
             random_state=42
         )
         labels = kmeans.fit_predict(rep)
-        
-        
+           
         elapsed = time.time() - start_time
         return labels, elapsed
