@@ -27,7 +27,7 @@ class MomentClusterModel(BaseClusterModel):
         kmeans_n_init = self.params.get('kmeans_n_init', 1)
         kmeans_max_iter = self.params.get('kmeans_max_iter', 100)
         kmeans_tol = self.params.get('kmeans_tol', 1e-4)
-        
+    
         # Initialize model
         model = MOMENTPipeline.from_pretrained(
             model_name, 

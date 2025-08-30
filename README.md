@@ -1,6 +1,63 @@
-# Time-Series Clustering: A Comprehensive Study of Data Mining, Machine Learning, and Deep Learning Methods
+<h1 align="center">TSClusterX </h1>
+<h2 align="center">Time-Series Clustering: A Comprehensive Study of Data Mining, Machine Learning, and Deep Learning Methods</h2>
+
+<p align="center">
+<img alt="Issues" src="https://img.shields.io/github/issues/TheDatumOrg/TSB-Clustering">
+<img alt="License" src="https://img.shields.io/github/license/TheDatumOrg/TSB-Clustering">
+</p>
+
+<h2 id="overview"> 📄 Overview </h2>
 
 Time-series clustering is one of the most popular tasks in time series analysis, offering a pathway for unsupervised data exploration and often acting as a subroutine for other tasks. Despite being the subject of active research across disciplines for decades, there has been limited focus on benchmarking clustering methods for time series data. Unfortunately, existing studies have (i) omitted popular methods and entire classes of methods; (ii) considered limited choices for underlying distance measures; (iii) performed evaluations on a small number of datasets; (iv) avoided statistical validation of the findings; (v) suffered from poor reproduction of existing methods; or (vi) used questionable evaluation settings. Moreover, the growing enthusiasm for deep learning, particularly with the rise of foundation models that claim superior generalization across tasks and domains, highlights the need for a comprehensive evaluation, as their applicability to time-series clustering remains underexplored. Motivated by the aforementioned limitations, we comprehensively evaluate 84 clustering methods for time-series data, encompassing 10 different classes derived from data mining, machine learning, and deep learning literature. The evaluation is conducted across 128 different time-series datasets using rigorous statistical analysis.
+
+If you find our work helpful, please consider citing:
+
+<details>
+<summary>"Time-Series Clustering: A Comprehensive Study of Data Mining, Machine Learning, and Deep Learning Methods" John Paparrizos and Sai Prasanna Teja Reddy VLDB 2025.</summary>
+
+```bibtex
+@article{paparrizos2025time,
+  title={Time-Series Clustering: A Comprehensive Study of Data Mining, Machine Learning, and Deep Learning Methods},
+  author={Paparrizos, John and Reddy, SPT},
+  journal={Proceedings of the VLDB Endowment},
+  volume={18},
+  number={11},
+  pages={4380--4395},
+  year={2025}
+}
+```
+</details>
+
+<details>
+<summary>"Odyssey: An Engine Enabling The Time-Series Clustering Journey" John Paparrizos and Sai Prasanna Teja Reddy VLDB 2023.</summary>
+
+```bibtex
+@article{paparrizos2023odyssey,
+  title={Odyssey: An engine enabling the time-series clustering journey},
+  author={Paparrizos, John and Reddy, Sai Prasanna Teja},
+  journal={Proceedings of the VLDB Endowment},
+  volume={16},
+  number={12},
+  pages={4066--4069},
+  year={2023},
+  publisher={VLDB Endowment}
+}
+```
+</details>
+
+<details>
+
+<summary>"Bridging the Gap: A Decade Review of Time-Series Clustering Methods" John Paparrizos, Fan Yang, and Haojun Li.</summary>
+
+```bibtex
+@article{paparrizos2024bridging,
+  title={Bridging the gap: A decade review of time-series clustering methods},
+  author={Paparrizos, John and Yang, Fan and Li, Haojun},
+  journal={arXiv preprint arXiv:2412.20582},
+  year={2024}
+}
+```
+</details>
 
 ## Data
 
@@ -19,7 +76,7 @@ To ease reproducibility, we share our results over an established benchmarks:
 For the preprocessing steps check [here](https://github.com/thedatumorg/UCRArchiveFixes).
 
 
-## Overview
+## Get Started
 
 TSClusterX is designed to provide a unified platform for evaluating time series clustering algorithms with support for various distance measures, clustering models, and evaluation metrics. The framework follows a factory design pattern that makes it easy to extend with new components.
 
@@ -40,17 +97,6 @@ Python 3.7+ is required. Install the dependencies:
 ```bash
 pip install -r requirements.txt
 ```
-
-### Dependencies
-
-The main dependencies include:
-- `numpy` - Numerical computing
-- `scipy` - Scientific computing 
-- `scikit-learn` - Machine learning algorithms
-- `pandas` - Data manipulation
-- `matplotlib` - Plotting and visualization
-- `torch` - Deep learning framework (for neural clustering models)
-- `tslearn` - Time series machine learning
 
 ## Quick Start
 
@@ -95,15 +141,6 @@ from models.model import ModelFactory
 model = ModelFactory.get_model('kmeans', n_clusters=3, params={'init': 'k-means++'})
 ```
 
-Supported models include:
-- `kmeans` - K-means clustering
-- `agglomerative` - Agglomerative hierarchical clustering
-- `dbscan` - Density-based clustering
-- `pam` - Partitioning Around Medoids
-- `spectralclustering` - Spectral clustering
-- `densitypeaks` - Density peaks clustering
-- And many more specialized time series clustering methods
-
 ### Distance Factory
 
 ```python
@@ -113,16 +150,6 @@ from distances.distance import DistanceFactory
 distance = DistanceFactory.get_distance('dtw')
 distance_matrix = distance.compute(time_series_data)
 ```
-
-Supported distances include:
-- `euclidean` - Euclidean distance
-- `dtw` - Dynamic Time Warping
-- `gak` - Global Alignment Kernel
-- `sbd` - Shape-Based Distance
-- `msm` - Move-Split-Merge
-- `twed` - Time Warp Edit Distance
-- `erp` - Edit Distance with Real Penalty
-- And more
 
 ### DataLoader Factory
 
@@ -281,9 +308,6 @@ Please follow the existing patterns when adding new components.
 
 ## Methods
 
-We have implemented 80 methods from 9 classes of time-series clustering methods proposed for univariate time series. The following table 
-lists the methods considered:
-
 ### <span style='color:Tomato'>Partitional Clustering</span>
 | <span style="background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold"> Clustering Method </span>  | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Distance Measure / Feature Vector </span> | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Reference  </span> |
 |:------------------|:----------------------------------|:------------------------------------|
@@ -344,11 +368,6 @@ lists the methods considered:
 | UShapelet              | -                                 |       [15]                  |
 | LDPS              | -                                 |              [16]           |
 | USLM             | -                                 |           [17]               |
-### <span style='color:Tomato'>Semi-Supervised Clustering</span> 
-| <span style="background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold"> Clustering Method </span>  | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Distance Measure / Feature Vector </span> | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Reference  </span> |
-|:------------------|:----------------------------------|:-------------------|
-| FeatTS              | -                                 |        [18]             |
-| SS-DTW             | -                                 |         [19]             |
 ### <span style='color:Tomato'>Model and Feature based Clustering</span> 
 | <span style="background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold"> Clustering Method </span>  | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Distance Measure / Feature Vector </span> | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Reference  </span> |
 |:------------------|:----------------------------------|:----------------------------|
@@ -367,10 +386,8 @@ lists the methods considered:
 | SOM-VAE            | -                                 |               [30]                |
 | DEPICT           | -                                 |             [31]                   |
 | SDCN            | -                                 |                 [32]              |
-| ClusterGAN            | -                                 |           [34]                    |
 | VADE            | -                                 |              [33]                 |
 | DCN            | -                                 |              [25]                 |
-| CSL            | -                                 |              [35]                 |
 ### <span style='color:Tomato'>Foundation Model based Clustering</span> 
 | <span style="background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold"> Clustering Method </span>  | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Distance Measure / Feature Vector </span> | <span style='background-color:DarkSlateGray;color:LavenderBlush;font-weight:bold'> Reference  </span> |
 |:------------------|:----------------------------------|:-------------------------------------|
@@ -448,8 +465,6 @@ lists the methods considered:
 <br>
 [34] Ghasedi, Kamran, Xiaoqian Wang, Cheng Deng, and Heng Huang. "Balanced self-paced learning for generative adversarial clustering network." In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pp. 4391-4400. 2019.
 <br>
-[35] Liang, Zhiyu, Jianfeng Zhang, Chen Liang, Hongzhi Wang, Zheng Liang, and Lujia Pan. "Contrastive shapelet learning for unsupervised multivariate time series representation learning." arXiv preprint arXiv:2305.18888 (2023).
-<br>
 [36] Ansari, Abdul Fatir, Lorenzo Stella, Caner Turkmen, Xiyuan Zhang, Pedro Mercado, Huibin Shen, Oleksandr Shchur et al. "Chronos: Learning the language of time series." arXiv preprint arXiv:2403.07815 (2024).
 <br>
 [37] Zhou, Tian, Peisong Niu, Liang Sun, and Rong Jin. "One fits all: Power general time series analysis by pretrained lm." Advances in neural information processing systems 36 (2023): 43322-43355.
@@ -462,10 +477,3 @@ lists the methods considered:
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Citation
-
-If you use TSClusterX in your research, please cite:
-
-```bibtex
-```

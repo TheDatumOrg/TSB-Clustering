@@ -117,7 +117,7 @@ class OFAClusterModel(BaseClusterModel):
         kmeans_n_init = self.params.get('kmeans_n_init', 1)
         kmeans_max_iter = self.params.get('kmeans_max_iter', 300)
         kmeans_tol = self.params.get('kmeans_tol', 1e-4)
-        
+
         slen = int(X.shape[1])
         
         # Initialize model
@@ -162,6 +162,9 @@ class OFAClusterModel(BaseClusterModel):
             random_state=42
         )
         labels = kmeans.fit_predict(rep)
-        
+            random_state=42
+        )
+        labels = kmeans.fit_predict(rep)
+           
         elapsed = time.time() - start_time
         return labels, elapsed

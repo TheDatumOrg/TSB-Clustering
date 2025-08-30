@@ -29,7 +29,7 @@ class DCNClusterModel(BaseClusterModel):
             tuple: (predicted_labels, elapsed_time)
         """
         start_time = time.time()
-
+    
         # Import DCN from utils
         import sys
         import os
@@ -50,4 +50,3 @@ class DCNClusterModel(BaseClusterModel):
         
         elapsed_time = time.time() - start_time
         return y_pred, elapsed_time
-        

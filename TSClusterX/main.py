@@ -72,10 +72,6 @@ for i, sub_dataset_name in enumerate(sorted(os.listdir(args.dataset_path), key=s
     model = ModelFactory.get_model(args.model, nclusters, model_params, distance_name=args.distance, distance_matrix=distance_matrix)
     predicted_labels, elapsed = model.fit_predict(ts)
 
-    print(predicted_labels)
-    print(elapsed)
-    print(args.metrics)
-
     from metrics.metric import ClusterMetrics
     metrics = ClusterMetrics(labels, predicted_labels)
 
@@ -98,7 +94,6 @@ for i, sub_dataset_name in enumerate(sorted(os.listdir(args.dataset_path), key=s
         'metrics': {}
     }
     
-    # Add requested metrics to results
     if args.metrics:
         metric_functions = {
             'RI': ri_score,
