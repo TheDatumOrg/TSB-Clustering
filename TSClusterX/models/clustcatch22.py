@@ -7,10 +7,10 @@ def catch22_features(ts):
     """
     Extract Catch22 features from time series using the actual catch22 library
     """
-    import catch22
+    import pycatch22
     features = np.zeros((ts.shape[0], 22))
     for i in range(ts.shape[0]):
-        catchOut = catch22.catch22_all(ts[i])
+        catchOut = pycatch22.catch22_all(ts[i])
         features[i, :] = catchOut['values']
     return features
 

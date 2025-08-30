@@ -1,3 +1,4 @@
+from tqdm import tqdm
 import numpy as np
 from distances.distance import DistanceMeasure
 
@@ -34,7 +35,7 @@ class MSMDistance(DistanceMeasure):
     def compute(self, series_set):
         n = len(series_set)
         matrix = np.zeros((n, n))
-        for i in range(n):
+        for i in tqdm(range(n)):
             for j in range(n):
                 matrix[i, j] = self.calculate_MSM_distance(series_set[i], series_set[j], c=0.5, w=int(series_set.shape[1]/5))
         return matrix

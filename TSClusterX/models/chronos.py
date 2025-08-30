@@ -1,3 +1,4 @@
+import os
 import time
 import torch
 import numpy as np
@@ -17,9 +18,9 @@ class ChronosClusterModel(BaseClusterModel):
         
         print(f"Using parameters: {self.params}")
         start_time = time.time()
-        
+
         # Default parameters
-        model_name = self.params.get('model_name', './chronos-t5-small')
+        model_name = self.params.get('model_name', 'amazon/chronos-t5-small')
         device_map = self.params.get('device_map', 'cuda')
         torch_dtype_str = self.params.get('torch_dtype', 'torch.bfloat16')
         

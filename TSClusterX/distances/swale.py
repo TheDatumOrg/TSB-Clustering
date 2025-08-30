@@ -1,3 +1,4 @@
+from tqdm import tqdm
 import numpy as np
 from distances.distance import DistanceMeasure
 
@@ -28,7 +29,7 @@ class SWALEDistance(DistanceMeasure):
     def compute(self, series_set):
         n = len(series_set)
         matrix = np.zeros((n, n))
-        for i in range(n):
+        for i in tqdm(range(n)):
             for j in range(n):
                 matrix[i, j] = self.swale_dist(series_set[i], series_set[j], epsilon=0.2)
         return matrix

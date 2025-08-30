@@ -32,8 +32,8 @@ class DistanceFactory:
             from distances.kdtw import kDTWDistance
             return kDTWDistance()
         elif name == "lcss":
-            from distances.lcss import LCSSistance
-            return LCSSistance()
+            from distances.lcss import LCSSDistance
+            return LCSSDistance()
         elif name == "msm":
             from distances.msm import MSMDistance
             return MSMDistance()

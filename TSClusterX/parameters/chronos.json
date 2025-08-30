@@ -1,5 +1,5 @@
 {
-    "model_name": "./chronos-t5-small",
+    "model_name": "amazon/chronos-t5-small",
     "device_map": "cuda",
     "torch_dtype": "torch.bfloat16",
     "kmeans_init": "random",

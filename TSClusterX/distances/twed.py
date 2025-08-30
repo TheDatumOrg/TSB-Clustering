@@ -1,3 +1,4 @@
+from tqdm import tqdm
 import numpy as np
 from distances.distance import DistanceMeasure
 
@@ -60,7 +61,7 @@ class TWEDDistance(DistanceMeasure):
     def compute(self, series_set):
         n = len(series_set)
         matrix = np.zeros((n, n))
-        for i in range(n):
+        for i in tqdm(range(n)):
             for j in range(n):
                 matrix[i, j] = self.twed_distance(series_set[i], np.array(list(range(series_set[i].shape[0]))), series_set[j], np.array(list(range(series_set[j].shape[0]))), w=int(series_set.shape[1]))
 

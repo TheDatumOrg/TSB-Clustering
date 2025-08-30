@@ -1,3 +1,4 @@
+from tqdm import tqdm
 import numpy as np
 from distances.distance import DistanceMeasure
 
@@ -31,7 +32,7 @@ class SINKDistance(DistanceMeasure):
         gamma = 5
 
         sum_exp_NCCc_list = self.store_sum_exp_NCCc(series_set, gamma)
-        for i in range(n):
+        for i in tqdm(range(n)):
             for j in range(n):
                 matrix[i, j] = self.calculate_sink_distance(series_set[i], series_set[j], sum_exp_NCCc_list[i], sum_exp_NCCc_list[j], gamma)
         return matrix

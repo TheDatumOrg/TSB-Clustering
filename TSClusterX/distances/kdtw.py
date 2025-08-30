@@ -1,9 +1,10 @@
+from tqdm import tqdm
 import numpy as np
 from distances.distance import DistanceMeasure
 
 
 class kDTWDistance(DistanceMeasure):
-    def kdtw_sim(self, x, y, gamma):
+    def kdtw_distance(self, x, y, gamma):
         xlen = len(x)
         ylen = len(y)
         xp = np.zeros(xlen+1)
@@ -59,7 +60,7 @@ class kDTWDistance(DistanceMeasure):
     def compute(self, series_set):
         n = len(series_set)
         matrix = np.zeros((n, n))
-        for i in range(n):
+        for i in tqdm(range(n)):
             for j in range(n):
                 matrix[i, j] = self.kdtw_distance(series_set[i], series_set[j], gamma=0.125)
         return matrix

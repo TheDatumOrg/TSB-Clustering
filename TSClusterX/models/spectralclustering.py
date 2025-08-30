@@ -10,21 +10,14 @@ class SpectralClusteringModel(BaseClusterModel):
         start_time = time.time()
         
         # Configure clustering parameters
-        model_kwargs = {'n_clusters': self.n_clusters, 'random_state': 42}
+        model_kwargs = {'n_clusters': self.n_clusters}
         
         # Filter out None values and apply parameters
         valid_params = {k: v for k, v in self.params.items() if v is not None}
         model_kwargs.update(valid_params)
         
         if self.distance_matrix is not None:
-            # Use precomputed affinity matrix (convert distance to affinity)
-            # Convert distance matrix to affinity matrix (Gaussian kernel)
-            sigma = np.median(self.distance_matrix)
-            if sigma == 0:
-                sigma = 1.0
-            affinity_matrix = np.exp(-self.distance_matrix**2 / (2 * sigma**2))
-            np.fill_diagonal(affinity_matrix, 1.0)
-            
+            affinity_matrix = self.distance_matrix
             model_kwargs['affinity'] = 'precomputed'
             model = SpectralClustering(**model_kwargs)
             labels = model.fit_predict(affinity_matrix)

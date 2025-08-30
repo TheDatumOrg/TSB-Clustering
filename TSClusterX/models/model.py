@@ -55,8 +55,8 @@ class ModelFactory:
             from models import ksc
             return ksc.KSCClusterModel(n_clusters, params, distance_name, distance_matrix)
         elif model_name == 'catch22':
-            from models import catch22
-            return catch22.Catch22ClusterModel(n_clusters, params, distance_name, distance_matrix)
+            from models import clustcatch22
+            return clustcatch22.Catch22ClusterModel(n_clusters, params, distance_name, distance_matrix)
         elif model_name == 'lpcc':
             from models import lpcc
             return lpcc.LPCCClusterModel(n_clusters, params, distance_name, distance_matrix)

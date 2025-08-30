@@ -49,7 +49,8 @@ class MomentClusterModel(BaseClusterModel):
             if device == 'cuda':
                 context = context.cuda()
             
-            embeddings = model(context)
+            # Use the forward method with x_enc parameter
+            embeddings = model.forward(x_enc=context)
             representation = embeddings.embeddings.squeeze(0).detach().cpu().numpy()
             rep.append(representation)
             

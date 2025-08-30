@@ -24,12 +24,12 @@ os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 from time import time
 import numpy as np
+import tensorflow as tf
 import keras.backend as K
 from keras.layers import Layer, Dense, Input, InputSpec
 from keras.utils import get_custom_objects
 from keras.models import Model
 from keras.optimizers import SGD
-from keras.utils.vis_utils import plot_model
 
 from sklearn.cluster import KMeans
 from sklearn import metrics
@@ -121,7 +121,7 @@ class ClusteringLayer(Layer):
     def build(self, input_shape):
         assert len(input_shape) == 2
         input_dim = input_shape[1]
-        self.input_spec = InputSpec(dtype=K.floatx(), shape=(None, input_dim))
+        self.input_spec = InputSpec(dtype=tf.float32, shape=(None, input_dim))
         self.clusters = self.add_weight(name='clusters', 
                                         shape=(self.n_clusters, input_dim), 
                                         initializer='glorot_uniform',
@@ -139,10 +139,10 @@ class ClusteringLayer(Layer):
         Return:
             q: student's t-distribution, or soft labels for each sample. shape=(n_samples, n_clusters)
         """
-        q = 1.0 / (1.0 + (K.sum(K.square(K.expand_dims(inputs, axis=1) - self.clusters), axis=2) / self.alpha))
+        q = 1.0 / (1.0 + (tf.reduce_sum(tf.square(tf.expand_dims(inputs, axis=1) - self.clusters), axis=2) / self.alpha))
         q **= (self.alpha + 1.0) / 2.0
-        q = K.transpose(K.transpose(q) / K.sum(q, axis=1))
-        print(K.expand_dims(inputs, axis=1).shape, self.clusters.shape, q.shape)
+        q = tf.transpose(tf.transpose(q) / tf.reduce_sum(q, axis=1))
+        print(tf.expand_dims(inputs, axis=1).shape, self.clusters.shape, q.shape)
         return q
 
     def compute_output_shape(self, input_shape):
