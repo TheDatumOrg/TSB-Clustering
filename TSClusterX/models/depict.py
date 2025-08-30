@@ -25,31 +25,22 @@ class DEPICTClusterModel(BaseClusterModel):
             tuple: (predicted_labels, elapsed_time)
         """
         start_time = time.time()
+
+        # Import DEPICT from utils
+        import sys
+        import os
+        import torch
+        utils_path = os.path.join(os.path.dirname(__file__), 'utils')
+        if utils_path not in sys.path:
+            sys.path.insert(0, utils_path)
+        import DEPICT
         
-        try:
-            # Import DEPICT from utils
-            import sys
-            import os
-            import torch
-            utils_path = os.path.join(os.path.dirname(__file__), 'utils')
-            if utils_path not in sys.path:
-                sys.path.insert(0, utils_path)
-            import DEPICT
-            
-            # Create dummy labels for the depict function (it expects labels but doesn't use them for clustering)
-            dummy_labels = np.zeros(X.shape[0])
-            
-            # Call the DEPICT clustering function
-            y_pred = DEPICT.depict(X, dummy_labels, self.n_clusters)
-            
-            elapsed_time = time.time() - start_time
-            return y_pred, elapsed_time
-            
-        except Exception as e:
-            print(f"Error in DEPICT clustering: {e}")
-            # Fallback to K-means if DEPICT fails
-            from sklearn.cluster import KMeans
-            kmeans = KMeans(n_clusters=self.n_clusters, random_state=42)
-            y_pred = kmeans.fit_predict(X)
-            elapsed_time = time.time() - start_time
-            return y_pred, elapsed_time
+        # Create dummy labels for the depict function (it expects labels but doesn't use them for clustering)
+        dummy_labels = np.zeros(X.shape[0])
+        
+        # Call the DEPICT clustering function
+        y_pred = DEPICT.depict(X, dummy_labels, self.n_clusters)
+        
+        elapsed_time = time.time() - start_time
+        return y_pred, elapsed_time
+        

@@ -14,6 +14,7 @@ parser.add_argument('--model', type=str, default='agglomerative', help='name of 
 parser.add_argument('--distance', type=str, default=None, help='distance measure')
 parser.add_argument('--parameter_settings', type=str, default=None, help='parameter settings')
 parser.add_argument('--metrics', type=str, nargs='+', default=None, help='list of metrics')
+parser.add_argument('--experiment', type=str, help='experiment name')
 
 args = parser.parse_args()
 
@@ -113,6 +114,6 @@ for i, sub_dataset_name in enumerate(sorted(os.listdir(args.dataset_path), key=s
     all_results.append(result_data)
 
 # Save all results to file
-experiment_file = os.path.join(results_dir, "experiment.npy")
+experiment_file = os.path.join(results_dir, f"experiment-{args.experiment}.npy")
 np.save(experiment_file, all_results)
 print(f"Results saved to {experiment_file}")

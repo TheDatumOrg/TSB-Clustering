@@ -30,98 +30,89 @@ class SOMVAEClusterModel(BaseClusterModel):
         """
         start_time = time.time()
         
-        try:
-            import torch
-            import torch.nn as nn
-            from torch.utils.data import DataLoader, TensorDataset
-            from sklearn.cluster import KMeans
-            import numpy as np
+        import torch
+        import torch.nn as nn
+        from torch.utils.data import DataLoader, TensorDataset
+        from sklearn.cluster import KMeans
+        import numpy as np
+        
+        # Simple Autoencoder for feature extraction
+        class SimpleAutoencoder(nn.Module):
+            def __init__(self, input_dim, latent_dim):
+                super().__init__()
+                self.encoder = nn.Sequential(
+                    nn.Linear(input_dim, 256),
+                    nn.ReLU(),
+                    nn.Linear(256, 128),
+                    nn.ReLU(),
+                    nn.Linear(128, latent_dim)
+                )
+                self.decoder = nn.Sequential(
+                    nn.Linear(latent_dim, 128),
+                    nn.ReLU(),
+                    nn.Linear(128, 256),
+                    nn.ReLU(),
+                    nn.Linear(256, input_dim)
+                )
             
-            # Simple Autoencoder for feature extraction
-            class SimpleAutoencoder(nn.Module):
-                def __init__(self, input_dim, latent_dim):
-                    super().__init__()
-                    self.encoder = nn.Sequential(
-                        nn.Linear(input_dim, 256),
-                        nn.ReLU(),
-                        nn.Linear(256, 128),
-                        nn.ReLU(),
-                        nn.Linear(128, latent_dim)
-                    )
-                    self.decoder = nn.Sequential(
-                        nn.Linear(latent_dim, 128),
-                        nn.ReLU(),
-                        nn.Linear(128, 256),
-                        nn.ReLU(),
-                        nn.Linear(256, input_dim)
-                    )
+            def forward(self, x):
+                encoded = self.encoder(x)
+                decoded = self.decoder(encoded)
+                return encoded, decoded
+        
+        input_size = X.shape[1]
+        
+        # Create simple autoencoder
+        model = SimpleAutoencoder(input_size, self.latent_dim)
+        
+        if self.device == 'cuda' and torch.cuda.is_available():
+            model = model.cuda()
+            X_tensor = torch.FloatTensor(X).cuda()
+        else:
+            X_tensor = torch.FloatTensor(X)
+        
+        # Create data loader
+        dataset = TensorDataset(X_tensor)
+        dataloader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
+        
+        optimizer = torch.optim.Adam(model.parameters(), lr=self.learning_rate)
+        criterion = nn.MSELoss()
+        
+        # Training loop
+        print('Training SOM-VAE (simplified autoencoder)...')
+        model.train()
+        for epoch in range(min(self.epochs, 50)):
+            total_loss = 0
+            for batch, in dataloader:
+                optimizer.zero_grad()
                 
-                def forward(self, x):
-                    encoded = self.encoder(x)
-                    decoded = self.decoder(encoded)
-                    return encoded, decoded
-            
-            input_size = X.shape[1]
-            
-            # Create simple autoencoder
-            model = SimpleAutoencoder(input_size, self.latent_dim)
-            
-            if self.device == 'cuda' and torch.cuda.is_available():
-                model = model.cuda()
-                X_tensor = torch.FloatTensor(X).cuda()
-            else:
-                X_tensor = torch.FloatTensor(X)
-            
-            # Create data loader
-            dataset = TensorDataset(X_tensor)
-            dataloader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
-            
-            optimizer = torch.optim.Adam(model.parameters(), lr=self.learning_rate)
-            criterion = nn.MSELoss()
-            
-            # Training loop
-            print('Training SOM-VAE (simplified autoencoder)...')
-            model.train()
-            for epoch in range(min(self.epochs, 50)):
-                total_loss = 0
-                for batch, in dataloader:
-                    optimizer.zero_grad()
-                    
-                    if self.device == 'cuda' and torch.cuda.is_available():
-                        batch = batch[0].cuda()
-                    else:
-                        batch = batch[0]
-                    
-                    # Forward pass
-                    encoded, decoded = model(batch)
-                    
-                    # Reconstruction loss
-                    loss = criterion(decoded, batch)
-                    loss.backward()
-                    optimizer.step()
-                    total_loss += loss.item()
+                if self.device == 'cuda' and torch.cuda.is_available():
+                    batch = batch[0].cuda()
+                else:
+                    batch = batch[0]
                 
-                if epoch % 10 == 0:
-                    print(f'Epoch {epoch}, Loss: {total_loss/len(dataloader):.4f}')
+                # Forward pass
+                encoded, decoded = model(batch)
+                
+                # Reconstruction loss
+                loss = criterion(decoded, batch)
+                loss.backward()
+                optimizer.step()
+                total_loss += loss.item()
             
-            # Extract features and perform clustering
-            model.eval()
-            with torch.no_grad():
-                encoded_features, _ = model(X_tensor)
-                features = encoded_features.cpu().numpy()
-            
-            # Use K-means on the learned features
-            kmeans = KMeans(n_clusters=self.n_clusters, random_state=42, n_init=10)
-            y_pred = kmeans.fit_predict(features)
-            
-            elapsed_time = time.time() - start_time
-            return y_pred, elapsed_time
-            
-        except Exception as e:
-            print(f"Error in SOM-VAE clustering: {e}")
-            # Fallback to K-means if SOM-VAE fails
-            from sklearn.cluster import KMeans
-            kmeans = KMeans(n_clusters=self.n_clusters, random_state=42, n_init=10)
-            y_pred = kmeans.fit_predict(X)
-            elapsed_time = time.time() - start_time
-            return y_pred, elapsed_time
+            if epoch % 10 == 0:
+                print(f'Epoch {epoch}, Loss: {total_loss/len(dataloader):.4f}')
+        
+        # Extract features and perform clustering
+        model.eval()
+        with torch.no_grad():
+            encoded_features, _ = model(X_tensor)
+            features = encoded_features.cpu().numpy()
+        
+        # Use K-means on the learned features
+        kmeans = KMeans(n_clusters=self.n_clusters, random_state=42, n_init=10)
+        y_pred = kmeans.fit_predict(features)
+        
+        elapsed_time = time.time() - start_time
+        return y_pred, elapsed_time
+    

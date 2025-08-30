@@ -30,53 +30,44 @@ class IDECClusterModel(BaseClusterModel):
         """
         start_time = time.time()
         
-        try:
-            # Import IDEC from utils
-            import sys
-            import os
-            idec_path = os.path.join(os.path.dirname(__file__), 'utils', 'IDEC')
-            sys.path.append(idec_path)
-            
-            # Import IDEC class
-            from IDEC import IDEC
-            
-            # Adjust dimensions based on input data
-            if X.shape[1] != self.dims[0]:
-                self.dims[0] = X.shape[1]
-            
-            # Initialize IDEC model
-            idec_model = IDEC(dims=self.dims, n_clusters=self.n_clusters, alpha=self.alpha)
-            
-            # Pretrain autoencoder if no weights are provided
-            if self.ae_weights is None:
-                print('Pretraining autoencoder...')
-                idec_model.pretrain(X, batch_size=self.batch_size, epochs=300, optimizer='adam')
-            else:
-                idec_model.load_weights(self.ae_weights)
-            
-            # Compile the model for clustering
-            idec_model.compile(loss=['kld', 'mse'], loss_weights=[self.gamma, 1], optimizer='adam')
-            
-            # Cluster
-            fit_result = idec_model.fit(X, 
-                                      batch_size=self.batch_size,
-                                      maxiter=int(self.maxiter),
-                                      update_interval=self.update_interval,
-                                      tol=self.tol,
-                                      save_dir=self.save_dir)
-            
-            # Extract predicted labels from fit result
-            # fit returns: (best_loss, best_y_pred, best_inertia, loss, y_pred, inertia)
-            y_pred = fit_result[1]  # best_y_pred
-            
-            elapsed_time = time.time() - start_time
-            return y_pred, elapsed_time
-            
-        except Exception as e:
-            print(f"Error in IDEC clustering: {e}")
-            # Fallback to K-means if IDEC fails
-            from sklearn.cluster import KMeans
-            kmeans = KMeans(n_clusters=self.n_clusters, random_state=42)
-            y_pred = kmeans.fit_predict(X)
-            elapsed_time = time.time() - start_time
-            return y_pred, elapsed_time
+        # Import IDEC from utils
+        import sys
+        import os
+        idec_path = os.path.join(os.path.dirname(__file__), 'utils', 'IDEC')
+        sys.path.append(idec_path)
+        
+        # Import IDEC class
+        from IDEC import IDEC
+        
+        # Adjust dimensions based on input data
+        if X.shape[1] != self.dims[0]:
+            self.dims[0] = X.shape[1]
+        
+        # Initialize IDEC model
+        idec_model = IDEC(dims=self.dims, n_clusters=self.n_clusters, alpha=self.alpha)
+        
+        # Pretrain autoencoder if no weights are provided
+        if self.ae_weights is None:
+            print('Pretraining autoencoder...')
+            idec_model.pretrain(X, batch_size=self.batch_size, epochs=300, optimizer='adam')
+        else:
+            idec_model.load_weights(self.ae_weights)
+        
+        # Compile the model for clustering
+        idec_model.compile(loss=['kld', 'mse'], loss_weights=[self.gamma, 1], optimizer='adam')
+        
+        # Cluster
+        fit_result = idec_model.fit(X, 
+                                    batch_size=self.batch_size,
+                                    maxiter=int(self.maxiter),
+                                    update_interval=self.update_interval,
+                                    tol=self.tol,
+                                    save_dir=self.save_dir)
+        
+        # Extract predicted labels from fit result
+        # fit returns: (best_loss, best_y_pred, best_inertia, loss, y_pred, inertia)
+        y_pred = fit_result[1]  # best_y_pred
+        
+        elapsed_time = time.time() - start_time
+        return y_pred, elapsed_time
+        

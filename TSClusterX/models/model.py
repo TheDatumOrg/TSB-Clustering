@@ -72,6 +72,9 @@ class ModelFactory:
         elif model_name == 'featts':
             from models import featts
             return featts.FeatTSClusterModel(n_clusters, params, distance_name, distance_matrix)
+        elif model_name == 'kasba':
+            from models import kasba
+            return kasba.KASBAClusterModel(n_clusters, params, distance_name, distance_matrix)
         elif model_name == 'kshape':
             from models import kshape
             return kshape.KShapeClusterModel(n_clusters, params, distance_name, distance_matrix)

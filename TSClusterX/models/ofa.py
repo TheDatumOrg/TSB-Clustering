@@ -118,56 +118,50 @@ class OFAClusterModel(BaseClusterModel):
         kmeans_max_iter = self.params.get('kmeans_max_iter', 300)
         kmeans_tol = self.params.get('kmeans_tol', 1e-4)
         
-        try:
-            slen = int(X.shape[1])
-            
-            # Initialize model
-            gpt4_model = GPT4TS(GPT2Config, slen, device)
-            mse_loss = nn.MSELoss()
-            optim = torch.optim.Adam(gpt4_model.parameters(), lr=learning_rate)
+        slen = int(X.shape[1])
+        
+        # Initialize model
+        gpt4_model = GPT4TS(GPT2Config, slen, device)
+        mse_loss = nn.MSELoss()
+        optim = torch.optim.Adam(gpt4_model.parameters(), lr=learning_rate)
 
-            # Training phase
-            gpt4_model.train()
-            progress_iter = tqdm(X) if tqdm else X
-            for t in progress_iter:
-                t = torch.tensor(t).unsqueeze(0).unsqueeze(2).to(torch.float32).to(device)
+        # Training phase
+        gpt4_model.train()
+        progress_iter = tqdm(X) if tqdm else X
+        for t in progress_iter:
+            t = torch.tensor(t).unsqueeze(0).unsqueeze(2).to(torch.float32).to(device)
 
-                optim.zero_grad()
+            optim.zero_grad()
 
+            hidden, output = gpt4_model(t)
+            loss = mse_loss(output, t)
+
+            loss.backward()
+            optim.step()
+
+        # Inference phase
+        gpt4_model.eval()
+        rep = []
+        progress_iter = tqdm(X) if tqdm else X
+        for t in progress_iter:
+            t = torch.tensor(t).unsqueeze(0).unsqueeze(2).to(torch.float32).to(device)
+
+            with torch.no_grad():
                 hidden, output = gpt4_model(t)
-                loss = mse_loss(output, t)
+                rep.append(hidden.squeeze(dim=0).detach().cpu().numpy())
 
-                loss.backward()
-                optim.step()
-
-            # Inference phase
-            gpt4_model.eval()
-            rep = []
-            progress_iter = tqdm(X) if tqdm else X
-            for t in progress_iter:
-                t = torch.tensor(t).unsqueeze(0).unsqueeze(2).to(torch.float32).to(device)
-
-                with torch.no_grad():
-                    hidden, output = gpt4_model(t)
-                    rep.append(hidden.squeeze(dim=0).detach().cpu().numpy())
-
-            rep = np.array(rep)
-            
-            # Perform clustering
-            kmeans = KMeans(
-                n_clusters=self.n_clusters, 
-                init=kmeans_init, 
-                n_init=kmeans_n_init,
-                max_iter=kmeans_max_iter,
-                tol=kmeans_tol,
-                random_state=42
-            )
-            labels = kmeans.fit_predict(rep)
-            
-        except Exception as e:
-            print(f"Error in OFA clustering: {e}")
-            # Fallback to random labels
-            labels = np.random.randint(0, self.n_clusters, size=len(X))
+        rep = np.array(rep)
+        
+        # Perform clustering
+        kmeans = KMeans(
+            n_clusters=self.n_clusters, 
+            init=kmeans_init, 
+            n_init=kmeans_n_init,
+            max_iter=kmeans_max_iter,
+            tol=kmeans_tol,
+            random_state=42
+        )
+        labels = kmeans.fit_predict(rep)
         
         elapsed = time.time() - start_time
         return labels, elapsed

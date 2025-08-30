@@ -63,7 +63,7 @@ python TSClusterX/main.py --dataset ucr_uea --start 1 --end 10 \
 
 # Run with DTW distance and agglomerative clustering
 python TSClusterX/main.py --dataset ucr_uea --start 1 --end 10 \
-    --dataset_path data/UCR2018/ --model agglomerative --distance dtw
+    --dataset_path data/UCR2018/ --model agglomerative --distance sbd
 
 # Use parameter configuration files
 python TSClusterX/main.py --dataset ucr_uea --start 1 --end 10 \

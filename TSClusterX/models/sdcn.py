@@ -136,72 +136,63 @@ class SDCNClusterModel(BaseClusterModel):
         """
         start_time = time.time()
         
-        try:
-            # Import sklearn here to avoid import errors if not available
-            from sklearn.neighbors import kneighbors_graph
+        # Import sklearn here to avoid import errors if not available
+        from sklearn.neighbors import kneighbors_graph
+        
+        # Create adjacency graph for SDCN (using k-nearest neighbors)
+        k = min(10, X.shape[0] - 1)  # Use k=10 or smaller if needed
+        adj = kneighbors_graph(X, n_neighbors=k, include_self=False)
+        adj = adj.toarray()
+        adj = adj + adj.T  # Make symmetric
+        adj = np.where(adj > 0, 1, 0)  # Binarize
+        
+        # Convert to tensors
+        X_tensor = torch.FloatTensor(X)
+        adj_tensor = torch.FloatTensor(adj)
+        
+        if self.device == 'cuda' and torch.cuda.is_available():
+            X_tensor = X_tensor.cuda()
+            adj_tensor = adj_tensor.cuda()
+        
+        # Adjust dimensions based on input data
+        n_input = X.shape[1]
+        
+        # Initialize SDCN model
+        model = SDCN(500, 500, 2000, 2000, 500, 500, n_input, self.n_z, 
+                    self.n_clusters, v=1.0)
+        
+        if self.device == 'cuda' and torch.cuda.is_available():
+            model = model.cuda()
+        
+        optimizer = torch.optim.Adam(model.parameters(), lr=self.lr)
+        
+        # Train the model
+        model.train()
+        print('Training SDCN...')
+        for epoch in range(min(self.epochs, 100)):  # Limit epochs for efficiency
+            optimizer.zero_grad()
             
-            # Create adjacency graph for SDCN (using k-nearest neighbors)
-            k = min(10, X.shape[0] - 1)  # Use k=10 or smaller if needed
-            adj = kneighbors_graph(X, n_neighbors=k, include_self=False)
-            adj = adj.toarray()
-            adj = adj + adj.T  # Make symmetric
-            adj = np.where(adj > 0, 1, 0)  # Binarize
+            x_bar, q, pred, z = model(X_tensor, adj_tensor)
             
-            # Convert to tensors
-            X_tensor = torch.FloatTensor(X)
-            adj_tensor = torch.FloatTensor(adj)
+            # Reconstruction loss
+            re_loss = torch.nn.MSELoss()(x_bar, X_tensor)
             
-            if self.device == 'cuda' and torch.cuda.is_available():
-                X_tensor = X_tensor.cuda()
-                adj_tensor = adj_tensor.cuda()
+            # KL divergence loss (simplified)
+            kl_loss = torch.nn.KLDivLoss()(q.log(), torch.softmax(pred, dim=1))
             
-            # Adjust dimensions based on input data
-            n_input = X.shape[1]
+            loss = re_loss + 0.1 * kl_loss
+            loss.backward()
+            optimizer.step()
             
-            # Initialize SDCN model
-            model = SDCN(500, 500, 2000, 2000, 500, 500, n_input, self.n_z, 
-                        self.n_clusters, v=1.0)
-            
-            if self.device == 'cuda' and torch.cuda.is_available():
-                model = model.cuda()
-            
-            optimizer = torch.optim.Adam(model.parameters(), lr=self.lr)
-            
-            # Train the model
-            model.train()
-            print('Training SDCN...')
-            for epoch in range(min(self.epochs, 100)):  # Limit epochs for efficiency
-                optimizer.zero_grad()
-                
-                x_bar, q, pred, z = model(X_tensor, adj_tensor)
-                
-                # Reconstruction loss
-                re_loss = torch.nn.MSELoss()(x_bar, X_tensor)
-                
-                # KL divergence loss (simplified)
-                kl_loss = torch.nn.KLDivLoss()(q.log(), torch.softmax(pred, dim=1))
-                
-                loss = re_loss + 0.1 * kl_loss
-                loss.backward()
-                optimizer.step()
-                
-                if epoch % 20 == 0:
-                    print(f'Epoch {epoch}, Loss: {loss.item():.4f}')
-            
-            # Get predictions
-            model.eval()
-            with torch.no_grad():
-                _, _, pred, _ = model(X_tensor, adj_tensor)
-                y_pred = torch.argmax(pred, dim=1).cpu().numpy()
-            
-            elapsed_time = time.time() - start_time
-            return y_pred, elapsed_time
-            
-        except Exception as e:
-            print(f"Error in SDCN clustering: {e}")
-            # Fallback to K-means if SDCN fails
-            from sklearn.cluster import KMeans
-            kmeans = KMeans(n_clusters=self.n_clusters, random_state=42)
-            y_pred = kmeans.fit_predict(X)
-            elapsed_time = time.time() - start_time
-            return y_pred, elapsed_time
+            if epoch % 20 == 0:
+                print(f'Epoch {epoch}, Loss: {loss.item():.4f}')
+        
+        # Get predictions
+        model.eval()
+        with torch.no_grad():
+            _, _, pred, _ = model(X_tensor, adj_tensor)
+            y_pred = torch.argmax(pred, dim=1).cpu().numpy()
+        
+        elapsed_time = time.time() - start_time
+        return y_pred, elapsed_time
+        
