@@ -10,7 +10,7 @@ class KMeansClusterModel(BaseClusterModel):
         start_time = time.time()
         
         # Configure clustering
-        model_kwargs = {'n_clusters': self.n_clusters, 'random_state': 42}
+        model_kwargs = {'n_clusters': self.n_clusters}
         
         # Filter out None values and apply parameters
         valid_params = {k: v for k, v in self.params.items() if v is not None}
