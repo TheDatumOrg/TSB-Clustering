@@ -11,6 +11,7 @@ parser.add_argument('--start', type=int, default=1, help='start number of datase
 parser.add_argument('--end', type=int, default=128, help='end number of dataset')
 parser.add_argument('--dataset_path', type=str, default='../data/UCR2018/', help='path to the dataset')
 parser.add_argument('--model', type=str, default='agglomerative', help='name of the model')
+parser.add_argument('--clust_class', type=str, default='hierarchical', help='class of the model')
 parser.add_argument('--distance', type=str, default=None, help='distance measure')
 parser.add_argument('--parameter_settings', type=str, default=None, help='parameter settings')
 parser.add_argument('--metrics', type=str, nargs='+', default=None, help='list of metrics')
@@ -31,7 +32,7 @@ from dataloaders.dataloader import DataLoaderFactory
 
 dataloader = DataLoaderFactory.get_dataloader(args.dataset, args.dataset_path)
 
-results_dir = f"results/{args.model}"
+results_dir = f"results/{args.clust_class}/{args.model}"
 os.makedirs(results_dir, exist_ok=True)
 
 all_results = []

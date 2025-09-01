@@ -1,7 +1,10 @@
 {
-    "latent_dim": 100,
-    "learning_rate": 0.0002,
-    "epochs": 100,
-    "batch_size": 32,
+    "dim_gen": 30,
+    "beta_n": 10.0,
+    "beta_c": 10.0,
+    "batch_size": 64,
+    "learning_rate": 1e-4,
+    "num_epochs": 100,
+    "n_critics": 5, 
     "device": "cpu"
 }
