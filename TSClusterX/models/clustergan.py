@@ -17,13 +17,6 @@ except ImportError:
 
 
 class ClusterGANClusterModel(BaseClusterModel):
-    """
-    ClusterGAN clustering model implementation based on:
-    "ClusterGAN : Latent Space Clustering in Generative Adversarial Networks"
-    by Sudipto Mukherjee, Himanshu Asnani, Eugene Lin and Sreeram Kannan.
-    
-    This implementation follows the factory design pattern used in the TSClusterX framework.
-    """
     
     def __init__(self, n_clusters, params=None, distance_name=None, distance_matrix=None):
         super().__init__(n_clusters, params, distance_name, distance_matrix)
@@ -272,7 +265,6 @@ class ClusterGANClusterModel(BaseClusterModel):
                       f"G_loss: {total_g_loss.item():.4f}")
     
     def _gradient_penalty(self, real_data, fake_data, lambda_gp=10):
-        """Compute gradient penalty for WGAN-GP."""
         batch_size = real_data.size(0)
         epsilon = torch.rand(batch_size, 1, device=self.device)
         epsilon = epsilon.expand_as(real_data)
